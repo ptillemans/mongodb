@@ -1307,7 +1307,8 @@ type Pipeline = [Document]
 aggregate :: MonadIO m => Collection -> Pipeline -> Action m [Document]
 -- ^ Runs an aggregate and unpacks the result. See <http://docs.mongodb.org/manual/core/aggregation/> for details.
 aggregate aColl agg = do
-    response <- runCommand ["aggregate" =: aColl, "pipeline" =: agg]
+    let cursor = Doc []
+    response <- runCommand ["aggregate" =: aColl, "pipeline" =: agg, "cursor" =: cursor ]
     case true1 "ok" response of
         True  -> lookup "result" response
         False -> liftIO $ throwIO $ AggregateFailure $ at "errmsg" response
